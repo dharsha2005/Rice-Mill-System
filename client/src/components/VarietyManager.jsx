@@ -12,7 +12,7 @@ const VarietyManager = () => {
 
     const fetchVarieties = async () => {
         try {
-            const res = await fetch('http://localhost:3000/api/varieties');
+            const res = await fetch('/api/varieties');
             if (res.ok) setVarieties(await res.json());
         } catch (err) {
             console.error('Failed to fetch varieties');
@@ -25,7 +25,7 @@ const VarietyManager = () => {
         if (!newVariety.trim()) return;
 
         try {
-            const res = await fetch('http://localhost:3000/api/varieties', {
+            const res = await fetch('/api/varieties', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newVariety.trim() })
@@ -46,7 +46,7 @@ const VarietyManager = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to remove this variety?')) return;
         try {
-            const res = await fetch(`http://localhost:3000/api/varieties/${id}`, { method: 'DELETE' });
+            const res = await fetch(`/api/varieties/${id}`, { method: 'DELETE' });
             if (res.ok) fetchVarieties();
         } catch (err) {
             console.error(err);
