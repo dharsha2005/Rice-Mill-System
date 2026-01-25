@@ -14,7 +14,7 @@ const Login = ({ onLogin }) => {
             const data = await loginUser({ username, password });
             onLogin(data.token, data.user, data.permissions);
         } catch (err) {
-            setError('Invalid Access Credentials. Unauthorized personnel strictly prohibited.');
+            setError(err.message);
         }
     };
 
