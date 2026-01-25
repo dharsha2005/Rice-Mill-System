@@ -25,6 +25,6 @@ req.on('error', (e) => {
 // Write data to request body
 req.write(JSON.stringify({
     username: 'admin',
-    password: 'wrongpassword' // Expect 401, not 404
+    password: 'admin123'
 }));
 req.end();
