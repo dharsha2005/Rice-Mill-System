@@ -1,0 +1,38 @@
+:root {
+  /* Premium Dark Theme Palette */
+  --bg-primary: #0f1115; /* Charcoal Dark */
+  --bg-secondary: #181b21; /* Lighter Charcoal */
+  --bg-card: rgba(24, 27, 33, 0.7); /* Glassmorphism base */
+  
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-accent: #fbbf24; /* Gold */
+
+  --accent-gold: #d4af37;
+  --accent-gold-dim: rgba(212, 175, 55, 0.2);
+  --accent-green: #10b981; /* Premium Green */
+  --accent-green-dim: rgba(16, 185, 129, 0.2);
+  
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-highlight: rgba(212, 175, 55, 0.3);
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Shadows */
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 15px rgba(212, 175, 55, 0.15);
+}

@@ -1,0 +1,8 @@
+node_modules/
+_legacy_backup/
+.env
+dist/
+build/
+.DS_Store
+coverage/
+.vscode/
