@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../services/api';
 import '../styles/global.css';
 
 const ExpenseList = ({ refresh }) => {
@@ -11,7 +12,7 @@ const ExpenseList = ({ refresh }) => {
 
     const fetchExpenses = async () => {
         try {
-            const res = await fetch('/api/expenses');
+            const res = await fetch(`${API_BASE_URL}/expenses`);
             if (res.ok) {
                 const data = await res.json();
                 setExpenses(data);

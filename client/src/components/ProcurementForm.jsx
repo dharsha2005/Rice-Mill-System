@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../services/api';
 import { Save, RefreshCw } from 'lucide-react';
 import { createProcurement } from '../services/api';
 
@@ -19,7 +19,7 @@ const ProcurementForm = ({ onEntryAdded }) => {
 
     useEffect(() => {
         // Fetch varieties
-        fetch('/api/varieties')
+        fetch(`${API_BASE_URL}/varieties`)
             .then(res => res.json())
             .then(data => {
                 setVarieties(data);

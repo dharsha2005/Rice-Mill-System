@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../services/api';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import '../styles/global.css';
 
@@ -9,7 +9,7 @@ const ProfitCharts = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('/api/profit-loss/trend');
+                const res = await fetch(`${API_BASE_URL}/profit-loss/trend`);
                 if (res.ok) {
                     const json = await res.json();
                     setData(json);

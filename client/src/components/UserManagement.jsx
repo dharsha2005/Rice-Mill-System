@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../services/api';
 import '../styles/global.css';
 import { UserPlus, Power, AlertCircle } from 'lucide-react';
 
@@ -16,7 +16,7 @@ const UserManagement = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch('/api/users');
+            const res = await fetch(`${API_BASE_URL}/users`);
             if (res.ok) {
                 setUsers(await res.json());
             }

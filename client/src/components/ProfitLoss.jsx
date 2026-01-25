@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../services/api';
 import ProfitSummary from './ProfitSummary';
 import ProfitCharts from './ProfitCharts';
 import { Calendar } from 'lucide-react';
@@ -13,7 +13,7 @@ const ProfitLoss = () => {
         const fetchSummary = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`/api/profit-loss/summary?period=${period}`);
+                const res = await fetch(`${API_BASE_URL}/profit-loss/summary?period=${period}`);
                 if (res.ok) {
                     const data = await res.json();
                     setSummaryData(data);

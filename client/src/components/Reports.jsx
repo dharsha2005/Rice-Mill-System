@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { API_BASE_URL } from '../services/api';
 import ReportView from './ReportView';
 import { FileText, Calendar, Filter } from 'lucide-react';
 import '../styles/global.css';
@@ -26,7 +26,7 @@ const Reports = () => {
     const generateReport = async () => {
         setLoading(true);
         try {
-            let url = `/api/reports/${activeReport}`;
+            let url = `${API_BASE_URL}/reports/${activeReport}`;
             if (activeReport !== 'stock') {
                 url += `?startDate=${dateRange.start}&endDate=${dateRange.end}`;
             }
