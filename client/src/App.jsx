@@ -19,10 +19,23 @@ import { Factory } from 'lucide-react'; // Icon for Milling if needed in headers
 import Welcome from './pages/Welcome';
 
 function App() {
+  // Safe parse helper
+  const safeParse = (key) => {
+    try {
+      const item = localStorage.getItem(key);
+      if (!item || item === 'undefined') return null;
+      return JSON.parse(item);
+    } catch (e) {
+      console.warn(`Failed to parse ${key} from localStorage`, e);
+      localStorage.removeItem(key); // Auto-heal
+      return null;
+    }
+  };
+
   // Initialize state from localStorage if available
   const [token, setToken] = useState(localStorage.getItem('token') || null);
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
-  const [permissions, setPermissions] = useState(JSON.parse(localStorage.getItem('permissions')) || null);
+  const [user, setUser] = useState(safeParse('user'));
+  const [permissions, setPermissions] = useState(safeParse('permissions'));
 
   // If token exists, we assume welcome is seen (skip intro on refresh)
   const [welcomeSeen, setWelcomeSeen] = useState(!!localStorage.getItem('token'));
@@ -32,6 +45,10 @@ function App() {
   const [refreshList, setRefreshList] = useState(0);
 
   const handleLogin = (token, user, permissions) => {
+    if (!token || !user) {
+      console.error('Login called with invalid data:', { token, user });
+      return;
+    }
     setToken(token);
     setUser(user);
     setPermissions(permissions || {});
