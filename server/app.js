@@ -60,11 +60,20 @@ const seedData = async () => {
                 const date = new Date();
                 date.setDate(date.getDate() - Math.floor(Math.random() * 180));
 
+                const quantity = Math.floor(Math.random() * 50) + 10;
+                const rate = 1200 + Math.floor(Math.random() * 500);
+                const total = quantity * rate;
+
+
                 salesData.push({
-                    buyer_name: buyers[Math.floor(Math.random() * buyers.length)],
+                    invoice_number: `INV-${2023000 + i}`,
+                    customer_name: buyers[Math.floor(Math.random() * buyers.length)],
                     rice_variety: varieties[Math.floor(Math.random() * varieties.length)],
-                    quantity_bags: Math.floor(Math.random() * 50) + 10,
-                    total_amount: (Math.floor(Math.random() * 50) + 10) * 1200,
+                    bag_size: 25,
+                    quantity_bags: quantity,
+                    rate_per_bag: rate,
+                    total_amount: total,
+                    payment_status: 'Paid',
                     sale_date: date
                 });
             }
