@@ -10,7 +10,13 @@ export const loginUser = async (credentials) => {
         const errorText = await response.text();
         throw new Error(`Login failed: ${response.status} ${response.statusText} - ${errorText}`);
     }
-    return response.json();
+    const text = await response.text();
+    try {
+        return text ? JSON.parse(text) : {};
+    } catch (e) {
+        console.error('Response was not JSON:', text);
+        throw new Error('Server returned invalid response');
+    }
 };
 
 export const fetchDashboardMetrics = async () => {
