@@ -1,5 +1,5 @@
-require('dotenv').config();
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const connectDB = require('./database');
@@ -21,6 +21,24 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+// Routes
+app.get('/api/health', (req, res) => {
+    const clientPath = path.join(__dirname, '../client/dist');
+    let clientFiles = [];
+    try {
+        clientFiles = fs.readdirSync(clientPath);
+    } catch (e) {
+        clientFiles = [`Error: ${e.message}`];
+    }
+    res.json({
+        status: 'ok',
+        cwd: process.cwd(),
+        dirname: __dirname,
+        clientPath,
+        clientFiles,
+        env: process.env.NODE_ENV
+    });
+});
 app.use('/api', apiRoutes);
 
 // Serve static files from the client directory
@@ -106,4 +124,14 @@ mongoose.connection.once('open', () => {
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+
+    // Debug Logging
+    const clientPath = path.join(__dirname, '../client/dist');
+    console.log('Client Path:', clientPath);
+    try {
+        const files = fs.readdirSync(clientPath);
+        console.log('Client Files:', files);
+    } catch (e) {
+        console.log('Error reading client files:', e.message);
+    }
 });
