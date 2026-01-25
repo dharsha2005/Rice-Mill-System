@@ -12,7 +12,7 @@ const ExpenseSummary = ({ refresh }) => {
 
     const fetchSummary = async () => {
         try {
-            const res = await fetch('http://localhost:3000/api/expenses/summary');
+            const res = await fetch('/api/expenses/summary');
             if (res.ok) {
                 const data = await res.json();
                 setSummary(data);

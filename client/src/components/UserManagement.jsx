@@ -16,7 +16,7 @@ const UserManagement = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch('http://localhost:3000/api/users');
+            const res = await fetch('/api/users');
             if (res.ok) {
                 setUsers(await res.json());
             }
@@ -27,7 +27,7 @@ const UserManagement = () => {
 
     const fetchRoles = async () => {
         try {
-            const res = await fetch('http://localhost:3000/api/roles');
+            const res = await fetch('/api/roles');
             if (res.ok) {
                 const data = await res.json();
                 setRoles(data.map(r => r.role));
@@ -41,7 +41,7 @@ const UserManagement = () => {
         e.preventDefault();
         setError('');
         try {
-            const res = await fetch('http://localhost:3000/api/users', {
+            const res = await fetch('/api/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

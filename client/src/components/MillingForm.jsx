@@ -16,7 +16,7 @@ const MillingForm = ({ onEntryAdded }) => {
 
     useEffect(() => {
         // Fetch varieties
-        fetch('http://localhost:3000/api/varieties')
+        fetch('/api/varieties')
             .then(res => res.json())
             .then(data => {
                 setVarieties(data);

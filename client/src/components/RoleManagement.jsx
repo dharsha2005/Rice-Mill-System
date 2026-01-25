@@ -13,7 +13,7 @@ const RoleManagement = () => {
     const fetchRoles = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:3000/api/roles');
+            const res = await fetch('/api/roles');
             if (res.ok) {
                 setRoles(await res.json());
             }
@@ -43,7 +43,7 @@ const RoleManagement = () => {
 
     const saveRole = async (role) => {
         try {
-            const res = await fetch('http://localhost:3000/api/roles/permissions', {
+            const res = await fetch('/api/roles/permissions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ role: role.role, permissions: role.permissions })
@@ -61,7 +61,7 @@ const RoleManagement = () => {
 
     // Seed helper
     const handleSeed = async () => {
-        await fetch('http://localhost:3000/api/roles/seed', { method: 'POST' });
+        await fetch('/api/roles/seed', { method: 'POST' });
         fetchRoles();
     };
 

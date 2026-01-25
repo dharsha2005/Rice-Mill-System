@@ -26,7 +26,7 @@ const Reports = () => {
     const generateReport = async () => {
         setLoading(true);
         try {
-            let url = `http://localhost:3000/api/reports/${activeReport}`;
+            let url = `/api/reports/${activeReport}`;
             if (activeReport !== 'stock') {
                 url += `?startDate=${dateRange.start}&endDate=${dateRange.end}`;
             }

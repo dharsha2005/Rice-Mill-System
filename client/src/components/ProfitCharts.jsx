@@ -9,7 +9,7 @@ const ProfitCharts = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/profit-loss/trend');
+                const res = await fetch('/api/profit-loss/trend');
                 if (res.ok) {
                     const json = await res.json();
                     setData(json);

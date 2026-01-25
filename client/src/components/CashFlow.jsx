@@ -7,7 +7,7 @@ const CashFlow = ({ refreshTrigger }) => {
     useEffect(() => {
         const fetchSummary = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/payments/summary');
+                const res = await fetch('/api/payments/summary');
                 if (res.ok) {
                     const data = await res.json();
                     setSummary(data);

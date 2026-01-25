@@ -12,7 +12,7 @@ const AlertsWidget = () => {
 
     const fetchAlerts = async () => {
         try {
-            const res = await fetch('http://localhost:3000/api/alerts');
+            const res = await fetch('/api/alerts');
             if (res.ok) {
                 setAlerts(await res.json());
             }

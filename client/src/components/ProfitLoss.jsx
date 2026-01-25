@@ -13,7 +13,7 @@ const ProfitLoss = () => {
         const fetchSummary = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`http://localhost:3000/api/profit-loss/summary?period=${period}`);
+                const res = await fetch(`/api/profit-loss/summary?period=${period}`);
                 if (res.ok) {
                     const data = await res.json();
                     setSummaryData(data);

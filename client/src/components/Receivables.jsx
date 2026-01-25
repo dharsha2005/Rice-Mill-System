@@ -14,7 +14,7 @@ const Receivables = ({ refreshTrigger, onPaymentRecorded }) => {
 
     const fetchReceivables = async () => {
         try {
-            const res = await fetch('http://localhost:3000/api/payments/receivables');
+            const res = await fetch('/api/payments/receivables');
             if (res.ok) {
                 const data = await res.json();
                 setReceivables(data);
@@ -30,7 +30,7 @@ const Receivables = ({ refreshTrigger, onPaymentRecorded }) => {
         if (!payAmount || parseFloat(payAmount) <= 0) return;
 
         try {
-            const res = await fetch('http://localhost:3000/api/payments', {
+            const res = await fetch('/api/payments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
