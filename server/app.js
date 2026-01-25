@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const connectDB = require('./database');
 const apiRoutes = require('./routes/api');
@@ -13,13 +14,21 @@ const Milling = require('./models/Milling');
 const Inventory = require('./models/Inventory');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
 // Routes
 app.use('/api', apiRoutes);
+
+// Serve static files from the client directory
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
 // Connect to MongoDB
 connectDB();
