@@ -49,8 +49,23 @@ exports.createSale = async (req, res) => {
             gst_amount,
             total_amount,
             payment_status,
-            sale_date: new Date()
+            sale_date: new Date(),
+            // If Paid immediately, set paid_amount to total, else 0
+            paid_amount: payment_status === 'Paid' ? total_amount : 0
         });
+
+        // 4. Auto-Record Payment if 'Paid'
+        if (payment_status === 'Paid') {
+            const Payment = require('../models/Payment'); // Lazy load or move top
+            await Payment.create({
+                ref_type: 'Sales',
+                ref_id: newSale._id,
+                amount: total_amount,
+                payment_mode: 'Cash', // Default to Cash for counter sales if unspecified
+                notes: `Auto-generated for Invoice #${invoice_number}`,
+                payment_date: new Date()
+            });
+        }
 
         res.status(201).json(newSale);
 

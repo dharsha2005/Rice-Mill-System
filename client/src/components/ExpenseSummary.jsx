@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../services/api';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import '../styles/global.css';
 
@@ -13,7 +12,7 @@ const ExpenseSummary = ({ refresh }) => {
 
     const fetchSummary = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/expenses/summary`);
+            const res = await fetch('/api/expenses/summary');
             if (res.ok) {
                 const data = await res.json();
                 setSummary(data);

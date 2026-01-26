@@ -1,4 +1,3 @@
-import { API_BASE_URL } from '../services/api';
 import React, { useState, useEffect } from 'react';
 import '../styles/global.css';
 
@@ -8,7 +7,7 @@ const CashFlow = ({ refreshTrigger }) => {
     useEffect(() => {
         const fetchSummary = async () => {
             try {
-                const res = await fetch(`${API_BASE_URL}/payments/summary`);
+                const res = await fetch('/api/payments/summary');
                 if (res.ok) {
                     const data = await res.json();
                     setSummary(data);

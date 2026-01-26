@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../services/api';
+import React, { useState, useEffect } from 'react';
 import '../styles/global.css';
 import { Save, RefreshCw } from 'lucide-react';
 
@@ -13,7 +13,7 @@ const RoleManagement = () => {
     const fetchRoles = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`${API_BASE_URL}/roles`);
+            const res = await fetch('/api/roles');
             if (res.ok) {
                 setRoles(await res.json());
             }

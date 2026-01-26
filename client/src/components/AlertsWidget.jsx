@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../services/api';
+import React, { useState, useEffect } from 'react';
 import '../styles/global.css';
 import { AlertCircle, CheckCircle, Bell } from 'lucide-react';
 
@@ -12,7 +12,7 @@ const AlertsWidget = () => {
 
     const fetchAlerts = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/alerts`);
+            const res = await fetch('/api/alerts');
             if (res.ok) {
                 setAlerts(await res.json());
             }

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../services/api';
+import React, { useState, useEffect } from 'react';
 import { Settings, Activity } from 'lucide-react';
 import { createMillingEntry } from '../services/api';
 
@@ -16,7 +16,7 @@ const MillingForm = ({ onEntryAdded }) => {
 
     useEffect(() => {
         // Fetch varieties
-        fetch(`${API_BASE_URL}/varieties`)
+        fetch('/api/varieties')
             .then(res => res.json())
             .then(data => {
                 setVarieties(data);

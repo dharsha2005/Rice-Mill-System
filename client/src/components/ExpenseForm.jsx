@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../services/api';
+import React, { useState } from 'react';
 import '../styles/global.css';
 
 const ExpenseForm = ({ onEntryAdded }) => {
@@ -23,7 +23,7 @@ const ExpenseForm = ({ onEntryAdded }) => {
         setStatus('loading');
 
         try {
-            const response = await fetch(`${API_BASE_URL}/expenses`, {
+            const response = await fetch('/api/expenses', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

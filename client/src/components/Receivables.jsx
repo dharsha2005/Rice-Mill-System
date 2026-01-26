@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../services/api';
+import React, { useState, useEffect } from 'react';
 import '../styles/global.css';
 
 const Receivables = ({ refreshTrigger, onPaymentRecorded }) => {
@@ -14,7 +14,7 @@ const Receivables = ({ refreshTrigger, onPaymentRecorded }) => {
 
     const fetchReceivables = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/payments/receivables`);
+            const res = await fetch('/api/payments/receivables');
             if (res.ok) {
                 const data = await res.json();
                 setReceivables(data);
