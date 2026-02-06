@@ -23,7 +23,7 @@ function App() {
   const safeParse = (key) => {
     try {
       const item = localStorage.getItem(key);
-      if (!item || item === 'undefined') return null;
+      if (!item || item === 'undefined' || item === 'null') return null;
       return JSON.parse(item);
     } catch (e) {
       console.warn(`Failed to parse ${key} from localStorage`, e);
@@ -32,13 +32,23 @@ function App() {
     }
   };
 
-  // Initialize state from localStorage if available
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
-  const [user, setUser] = useState(safeParse('user'));
-  const [permissions, setPermissions] = useState(safeParse('permissions'));
+  // Create valid initial state
+  const getInitialToken = () => {
+    const t = localStorage.getItem('token');
+    return (t && t !== 'undefined' && t !== 'null') ? t : null;
+  };
+
+  // Initialize state
+  const [token, setToken] = useState(getInitialToken);
+  const [user, setUser] = useState(() => safeParse('user'));
+  const [permissions, setPermissions] = useState(() => safeParse('permissions'));
 
   // If token exists, we assume welcome is seen (skip intro on refresh)
-  const [welcomeSeen, setWelcomeSeen] = useState(!!localStorage.getItem('token'));
+  // Ensure we rely on the CLEANED token value, not raw localStorage again
+  const [welcomeSeen, setWelcomeSeen] = useState(() => {
+    const t = localStorage.getItem('token');
+    return !!(t && t !== 'undefined' && t !== 'null');
+  });
 
   // Persist active tab
   const [activeTab, setActiveTab] = useState(localStorage.getItem('activeTab') || 'dashboard');

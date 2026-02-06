@@ -50,9 +50,6 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
-// Connect to MongoDB
-connectDB();
-
 // Seeding Logic
 const seedData = async () => {
     try {
@@ -119,20 +116,35 @@ const seedData = async () => {
     }
 };
 
-mongoose.connection.once('open', () => {
-    seedData();
-});
-
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-
-    // Debug Logging
-    const clientPath = path.join(__dirname, '../client/dist');
-    console.log('Client Path:', clientPath);
+// Connect to MongoDB and start server
+const startServer = async () => {
     try {
-        const files = fs.readdirSync(clientPath);
-        console.log('Client Files:', files);
-    } catch (e) {
-        console.log('Error reading client files:', e.message);
+        await connectDB();
+
+        // Seed Data only after successful connection
+        // We wait for the connection to be 'open' which happens after connectDB resolves, 
+        // but explicit ordering here is safer or we can just call it directly.
+        // The original code used mongoose.connection.once('open'), which is fine.
+        // But since we await connectDB(), we are already connected here.
+        await seedData();
+
+        app.listen(PORT, () => {
+            console.log(`Server running on http://localhost:${PORT}`);
+
+            // Debug Logging
+            const clientPath = path.join(__dirname, '../client/dist');
+            console.log('Client Path:', clientPath);
+            try {
+                const files = fs.readdirSync(clientPath);
+                console.log('Client Files:', files);
+            } catch (e) {
+                console.log('Error reading client files:', e.message);
+            }
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
     }
-});
+};
+
+startServer();
