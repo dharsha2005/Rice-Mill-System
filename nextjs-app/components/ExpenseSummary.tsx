@@ -72,7 +72,7 @@ export default function ExpenseSummary({ refreshTrigger }: { refreshTrigger: num
                                 </Pie>
                                 <Tooltip
                                     contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px' }}
-                                    formatter={(value: number) => `₹${value.toLocaleString()}`}
+                                    formatter={(value: number | undefined) => `₹${Number(value ?? 0).toLocaleString()}`}
                                 />
                                 <Legend />
                             </PieChart>
