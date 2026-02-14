@@ -2,6 +2,8 @@ const Procurement = require('../models/Procurement');
 const Sales = require('../models/Sales');
 const Milling = require('../models/Milling');
 
+const auditService = require('../services/auditService');
+
 // Create new procurement entry
 exports.createProcurement = async (req, res) => {
     try {
@@ -17,6 +19,15 @@ exports.createProcurement = async (req, res) => {
             rate_per_quintal,
             total_amount,
             purchase_date: purchase_date || new Date()
+        });
+
+        // Audit Log
+        await auditService.logActivity({
+            req,
+            module: 'Procurement',
+            action: 'CREATE',
+            description: `Procured ${quantity} quintals of ${paddy_type} from ${supplier_name}`,
+            details: { procurement_id: newProcurement._id, amount: total_amount }
         });
 
         res.status(201).json(newProcurement);

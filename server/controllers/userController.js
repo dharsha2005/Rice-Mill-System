@@ -9,6 +9,8 @@ exports.getUsers = async (req, res) => {
     }
 };
 
+const auditService = require('../services/auditService');
+
 exports.createUser = async (req, res) => {
     try {
         const { username, password, role } = req.body;
@@ -33,6 +35,15 @@ exports.createUser = async (req, res) => {
             status: 'Active'
         });
 
+        // Audit Log
+        await auditService.logActivity({
+            req,
+            module: 'User Management',
+            action: 'CREATE',
+            description: `Created new user: ${username} with role ${role}`,
+            details: { user_id: newUser._id }
+        });
+
         res.status(201).json({ message: 'User created successfully', user: { username: newUser.username, role: newUser.role } });
 
     } catch (err) {
@@ -45,7 +56,17 @@ exports.toggleUserStatus = async (req, res) => {
         const { id } = req.params;
         const { status } = req.body; // 'Active' or 'Disabled'
 
-        await User.findByIdAndUpdate(id, { status });
+        const user = await User.findByIdAndUpdate(id, { status });
+
+        // Audit Log
+        await auditService.logActivity({
+            req,
+            module: 'User Management',
+            action: 'UPDATE',
+            description: `Changed status of user ${user.username} to ${status}`,
+            details: { user_id: id, old_status: user.status, new_status: status }
+        });
+
         res.json({ message: `User status updated to ${status}` });
     } catch (err) {
         res.status(500).json({ error: 'Failed to update user status' });

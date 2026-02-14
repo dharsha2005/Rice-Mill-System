@@ -1,0 +1,30 @@
+[2026-02-14T05:28:04.904Z] MongoDB Connection Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+    at QueryReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)
+
+[2026-02-14T05:28:04.908Z] Failed to resolve MongoDB connection promise: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+    at QueryReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)
+
+[2026-02-14T05:28:04.913Z] Error in /api/payments/summary: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+    at QueryReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)
+
+[2026-02-14T05:28:04.958Z] MongoDB Connection Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+    at QueryReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)
+
+[2026-02-14T05:28:04.961Z] Failed to resolve MongoDB connection promise: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+    at QueryReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)
+
+[2026-02-14T05:28:04.963Z] Error in /api/payments/summary: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.irjjr71.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+    at QueryReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)
+

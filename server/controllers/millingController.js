@@ -1,6 +1,8 @@
 const Milling = require('../models/Milling');
 const Inventory = require('../models/Inventory');
 
+const auditService = require('../services/auditService');
+
 exports.createMillingEntry = async (req, res) => {
     try {
         const { paddy_type, input_paddy_qty, output_rice_qty, broken_rice_qty, husk_qty, milling_date } = req.body;
@@ -45,6 +47,15 @@ exports.createMillingEntry = async (req, res) => {
             { $inc: { quantity: brokenBags }, $set: { updated_at: new Date() } },
             { upsert: true, new: true, setDefaultsOnInsert: true }
         );
+
+        // Audit Log
+        await auditService.logActivity({
+            req,
+            module: 'Milling',
+            action: 'CREATE',
+            description: `Milled ${input_paddy_qty} Tons of ${paddy_type}. Batch: ${batch_id}`,
+            details: { efficiency: efficiency_percentage.toFixed(2) + '%' }
+        });
 
         res.status(201).json(newMilling);
     } catch (err) {

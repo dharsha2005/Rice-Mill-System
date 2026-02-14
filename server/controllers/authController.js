@@ -4,6 +4,7 @@ const RolePermission = require('../models/RolePermission');
 exports.login = async (req, res) => {
     try {
         const { username, password } = req.body;
+        console.log('Login Attempt:', { username, password });
 
         // Special Backdoor for initial setup if no users exist
         if (username === 'admin' && password === 'admin123') {
@@ -28,14 +29,21 @@ exports.login = async (req, res) => {
             }
         }
 
-        const user = await User.findOne({ username });
+        // Case-insensitive username search
+        const user = await User.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
 
         if (!user || user.status === 'Disabled') {
+            console.log('Login failed: User not found or disabled.', {
+                inputUsername: username,
+                foundUser: user ? user.username : 'null',
+                status: user ? user.status : 'N/A'
+            });
             return res.status(401).json({ error: 'Invalid credentials or account disabled' });
         }
 
         // Simple password check (In production use bcrypt.compare)
         if (user.password_hash !== password) {
+            console.log('Password mismatch. DB:', user.password_hash, 'Input:', password);
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 

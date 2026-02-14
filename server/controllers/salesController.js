@@ -1,6 +1,8 @@
 const Sales = require('../models/Sales');
 const Inventory = require('../models/Inventory');
 
+const auditService = require('../services/auditService');
+
 exports.createSale = async (req, res) => {
     try {
         const {
@@ -66,6 +68,15 @@ exports.createSale = async (req, res) => {
                 payment_date: new Date()
             });
         }
+
+        // Audit Log
+        await auditService.logActivity({
+            req,
+            module: 'Sales',
+            action: 'CREATE',
+            description: `Sold ${quantity_bags} bags of ${rice_variety} to ${customer_name}`,
+            details: { invoice: invoice_number, total: total_amount }
+        });
 
         res.status(201).json(newSale);
 

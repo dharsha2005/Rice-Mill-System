@@ -13,6 +13,7 @@ const userController = require('../controllers/userController');
 const roleController = require('../controllers/roleController');
 const alertController = require('../controllers/alertController');
 const varietyController = require('../controllers/varietyController');
+const auditController = require('../controllers/auditController');
 
 // Auth Routes
 router.post('/login', authController.login);
@@ -72,5 +73,8 @@ router.post('/alerts/:id/resolve', alertController.resolveAlert);
 router.get('/varieties', varietyController.getVarieties);
 router.post('/varieties', varietyController.addVariety);
 router.delete('/varieties/:id', varietyController.deleteVariety);
+
+// Audit Routes
+router.get('/audit/logs', auditController.getLogs);
 
 module.exports = router;

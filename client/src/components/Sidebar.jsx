@@ -1,4 +1,4 @@
-import { LayoutDashboard, Wheat, Settings, LogOut, Factory, Package, ShoppingCart, CreditCard, TrendingUp, BookOpen, FileText } from 'lucide-react';
+import { LayoutDashboard, Wheat, Settings, LogOut, Factory, Package, ShoppingCart, CreditCard, TrendingUp, BookOpen, FileText, Shield } from 'lucide-react';
 import '../styles/global.css';
 
 const Sidebar = ({ activeTab, setActiveTab, onLogout, permissions }) => {
@@ -13,6 +13,7 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout, permissions }) => {
         { id: 'profit_loss', label: 'Profit & Loss', icon: TrendingUp },
         { id: 'accounts', label: 'Accounts', icon: BookOpen },
         { id: 'settings', label: 'Settings', icon: Settings },
+        { id: 'audit_logs', label: 'Audit Logs', icon: Shield },
     ];
 
     return (

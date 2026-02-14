@@ -12,6 +12,7 @@ import ProfitLoss from './components/ProfitLoss';
 import Accounts from './components/Accounts';
 import Reports from './components/Reports';
 import Settings from './components/Settings';
+import AuditLogs from './components/AuditLogs';
 import Login from './pages/Login';
 import './styles/global.css';
 import { Factory } from 'lucide-react'; // Icon for Milling if needed in headers
@@ -163,6 +164,8 @@ function App() {
         {activeTab === 'accounts' && <Accounts />}
 
         {activeTab === 'settings' && <Settings userPermissions={permissions} />}
+
+        {activeTab === 'audit_logs' && <AuditLogs />}
       </main>
     </div>
   );

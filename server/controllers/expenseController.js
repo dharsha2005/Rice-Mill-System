@@ -1,5 +1,7 @@
 const Expense = require('../models/Expense');
 
+const auditService = require('../services/auditService');
+
 // Add new expense
 exports.addExpense = async (req, res) => {
     try {
@@ -15,6 +17,15 @@ exports.addExpense = async (req, res) => {
             amount,
             payment_mode,
             expense_date: expense_date || new Date()
+        });
+
+        // Audit Log
+        await auditService.logActivity({
+            req,
+            module: 'Expenses',
+            action: 'CREATE',
+            description: `Expense: ${category} - ${description}`,
+            details: { amount: amount }
         });
 
         res.status(201).json(newExpense);

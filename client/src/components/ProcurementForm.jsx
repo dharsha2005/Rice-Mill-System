@@ -5,7 +5,7 @@ import { createProcurement } from '../services/api';
 const ProcurementForm = ({ onEntryAdded }) => {
     const [formData, setFormData] = useState({
         supplier_name: '',
-        paddy_type: 'Basmati',
+        paddy_type: '',
         moisture_percentage: '',
         quantity: '',
         rate_per_quintal: '',

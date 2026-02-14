@@ -4,7 +4,7 @@ import { createMillingEntry } from '../services/api';
 
 const MillingForm = ({ onEntryAdded }) => {
     const [formData, setFormData] = useState({
-        paddy_type: 'Basmati',
+        paddy_type: '',
         input_paddy_qty: '',
         output_rice_qty: '',
         broken_rice_qty: '',

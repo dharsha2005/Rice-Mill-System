@@ -11,7 +11,7 @@ const Login = ({ onLogin }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const data = await loginUser({ username, password });
+            const data = await loginUser({ username: username.trim(), password: password.trim() });
             onLogin(data.token, data.user, data.permissions);
         } catch (err) {
             setError(err.message);
