@@ -13,6 +13,21 @@ exports.recordPayment = async (req, res) => {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
+        console.log(`[Payment] Processing: Type=${ref_type}, ID=${ref_id}, Amount=${amount}`);
+
+        // Validate Reference Exists FIRST
+        let referenceDoc = null;
+        if (ref_type === 'Sales') {
+            referenceDoc = await Sales.findById(ref_id);
+        } else if (ref_type === 'Procurement') {
+            referenceDoc = await Procurement.findById(ref_id);
+        }
+
+        if (!referenceDoc && (ref_type === 'Sales' || ref_type === 'Procurement')) {
+            console.error(`[Payment Error] Reference document not found: ${ref_type} ${ref_id}`);
+            return res.status(404).json({ error: `Reference ${ref_type} document not found` }); // Stop here!
+        }
+
         const newPayment = await Payment.create({
             ref_type,
             ref_id,
@@ -23,28 +38,18 @@ exports.recordPayment = async (req, res) => {
         });
 
         // Update Reference Document
-        if (ref_type === 'Sales') {
-            const sale = await Sales.findById(ref_id);
-            if (sale) {
-                sale.paid_amount = (sale.paid_amount || 0) + parseFloat(amount);
-                if (sale.paid_amount >= sale.total_amount) {
-                    sale.payment_status = 'Paid';
-                } else {
-                    sale.payment_status = 'Partial';
-                }
-                await sale.save();
+        if (referenceDoc) {
+            referenceDoc.paid_amount = (referenceDoc.paid_amount || 0) + parseFloat(amount);
+
+            // Logic for status update
+            // Note: Procurement/Sales have slightly different fields sometimes, but here assumed same structure for amount
+            if (referenceDoc.paid_amount >= referenceDoc.total_amount) {
+                referenceDoc.payment_status = 'Paid';
+            } else {
+                referenceDoc.payment_status = 'Partial';
             }
-        } else if (ref_type === 'Procurement') {
-            const proc = await Procurement.findById(ref_id);
-            if (proc) {
-                proc.paid_amount = (proc.paid_amount || 0) + parseFloat(amount);
-                if (proc.paid_amount >= proc.total_amount) {
-                    proc.payment_status = 'Paid';
-                } else {
-                    proc.payment_status = 'Partial';
-                }
-                await proc.save();
-            }
+            await referenceDoc.save();
+            console.log(`[Payment] Updated reference ${ref_type} ${ref_id}. New Paid: ${referenceDoc.paid_amount}`);
         }
         // Expenses are usually one-off, but if we link them, we might update them too.
         // For now, Expense model doesn't have partial payment logic, assumed paid full usually.

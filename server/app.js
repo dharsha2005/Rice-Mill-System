@@ -18,8 +18,24 @@ const Inventory = require('./models/Inventory');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// CORS configuration for Vercel deployment
+const corsOptions = {
+    origin: [
+        'http://localhost:5173',  // Vite dev server
+        'http://localhost:3000',  // Next.js dev server
+        'https://rice-mill-system-61l4.vercel.app',  // Your Vercel frontend
+        'https://*.vercel.app'  // Allow all Vercel subdomains
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 
 // Routes
 // Routes
