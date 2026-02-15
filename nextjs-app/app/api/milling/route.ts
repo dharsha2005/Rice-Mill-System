@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
         await connectDB();
 
         const body = await request.json();
-        const { paddy_type, input_paddy_qty, output_rice_qty, broken_rice_qty, husk_qty, milling_date } = body;
+        const { paddy_type, rice_variety, input_paddy_qty, output_rice_qty, broken_rice_qty, husk_qty, milling_date } = body;
 
         const efficiency_percentage = ((output_rice_qty + broken_rice_qty) / input_paddy_qty) * 100;
 
@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
         const newMilling = await Milling.create({
             batch_id,
             paddy_type,
+            rice_variety: rice_variety || paddy_type, // Fallback to paddy_type if not provided
             input_paddy_qty,
             output_rice_qty,
             broken_rice_qty,
@@ -44,8 +45,9 @@ export async function POST(request: NextRequest) {
         // 1 Ton = 1000kg = 20 Bags of 50kg
         const riceBags = output_rice_qty * 20;
 
+        // Use rice_variety (Output) for updating the Rice Stock
         await Inventory.findOneAndUpdate(
-            { rice_variety: paddy_type, grade: 'Premium', bag_size: 50 },
+            { rice_variety: rice_variety || paddy_type, grade: 'Premium', bag_size: 50 },
             { $inc: { quantity: riceBags }, $set: { updated_at: new Date() } },
             { upsert: true, new: true, setDefaultsOnInsert: true }
         );
@@ -53,7 +55,7 @@ export async function POST(request: NextRequest) {
         // Update Broken Rice
         const brokenBags = broken_rice_qty * 20;
         await Inventory.findOneAndUpdate(
-            { rice_variety: paddy_type, grade: 'Broken', bag_size: 50 },
+            { rice_variety: rice_variety || paddy_type, grade: 'Broken', bag_size: 50 },
             { $inc: { quantity: brokenBags }, $set: { updated_at: new Date() } },
             { upsert: true, new: true, setDefaultsOnInsert: true }
         );

@@ -10,11 +10,13 @@ export interface IMilling extends Document {
     efficiency_percentage: number;
     loss_percentage: number;
     milling_date: Date;
+    rice_variety: string;
 }
 
 const MillingSchema = new Schema<IMilling>({
     batch_id: { type: String, required: true, unique: true },
     paddy_type: { type: String, required: true },
+    rice_variety: { type: String, required: true },
     input_paddy_qty: { type: Number, required: true },
     output_rice_qty: { type: Number, required: true },
     broken_rice_qty: { type: Number, required: true },

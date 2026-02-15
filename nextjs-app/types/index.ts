@@ -59,6 +59,7 @@ export interface Milling {
     _id: string;
     batch_id: string;
     paddy_type: string;
+    rice_variety: string;
     input_paddy_qty: number;
     output_rice_qty: number;
     broken_rice_qty: number;

@@ -8,9 +8,11 @@ import type { Milling } from '@/types';
 export default function MillingPage() {
     const [activeTab, setActiveTab] = useState('entry');
     const [history, setHistory] = useState<Milling[]>([]);
+    const [varieties, setVarieties] = useState<any[]>([]);
 
     const [formData, setFormData] = useState({
         paddy_type: 'Basmati',
+        rice_variety: '', // Output variety
         input_paddy_qty: '',
         output_rice_qty: '',
         broken_rice_qty: '',
@@ -19,6 +21,30 @@ export default function MillingPage() {
     });
 
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        // Fetch varieties
+        const fetchVarieties = async () => {
+            try {
+                const res = await fetch('/api/varieties');
+                if (res.ok) {
+                    const data = await res.json();
+                    setVarieties(data);
+                    // Set default if available
+                    if (data.length > 0) {
+                        setFormData(prev => ({
+                            ...prev,
+                            paddy_type: data[0].name,
+                            rice_variety: data[0].name
+                        }));
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch varieties', err);
+            }
+        };
+        fetchVarieties();
+    }, []);
 
     const loadHistory = useCallback(async () => {
         try {
@@ -50,14 +76,16 @@ export default function MillingPage() {
                 husk_qty: parseFloat(formData.husk_qty)
             });
             alert('Milling entry added successfully!');
-            setFormData({
-                paddy_type: 'Basmati',
+
+            // Reset form but keep last selected varieties for convenience
+            setFormData(prev => ({
+                ...prev,
                 input_paddy_qty: '',
                 output_rice_qty: '',
                 broken_rice_qty: '',
                 husk_qty: '',
                 milling_date: new Date().toISOString().split('T')[0]
-            });
+            }));
         } catch {
             alert('Error adding milling entry');
         } finally {
@@ -98,9 +126,37 @@ export default function MillingPage() {
                     </h3>
 
                     <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px' }}>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '8px' }}>Paddy Type</label>
-                            <input name="paddy_type" value={formData.paddy_type} onChange={handleChange} required />
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '8px' }}>Input Paddy Type</label>
+                                <select
+                                    name="paddy_type"
+                                    value={formData.paddy_type}
+                                    onChange={handleChange}
+                                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.05)', color: 'var(--text-primary)' }}
+                                    required
+                                >
+                                    <option value="" disabled>Select Paddy</option>
+                                    {varieties.map(v => (
+                                        <option key={v._id} value={v.name}>{v.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '8px' }}>Output Rice Variety</label>
+                                <select
+                                    name="rice_variety"
+                                    value={formData.rice_variety}
+                                    onChange={handleChange}
+                                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.05)', color: 'var(--text-primary)' }}
+                                    required
+                                >
+                                    <option value="" disabled>Select Rice Variety</option>
+                                    {varieties.map(v => (
+                                        <option key={v._id} value={v.name}>{v.name}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
