@@ -2,9 +2,52 @@
 
 import { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { DollarSign, Package, TrendingUp, AlertCircle, Wheat } from 'lucide-react';
+import { DollarSign, Package, TrendingUp, AlertCircle, Wheat, Database } from 'lucide-react';
 import { getDashboardMetrics } from '@/lib/api';
 import AlertsWidget from '@/components/AlertsWidget';
+
+const DatabaseStatus = () => {
+    const [status, setStatus] = useState<{ status: string; latency: string } | null>(null);
+
+    useEffect(() => {
+        const checkStatus = async () => {
+            try {
+                const res = await fetch('/api/db-status');
+                const data = await res.json();
+                setStatus(data);
+            } catch (err) {
+                console.error('Failed to fetch DB status', err);
+                setStatus({ status: 'error', latency: 'N/A' });
+            }
+        };
+        checkStatus();
+        const interval = setInterval(checkStatus, 30000); // Check every 30s
+        return () => clearInterval(interval);
+    }, []);
+
+    if (!status) return null;
+
+    const isConnected = status.status === 'connected';
+
+    return (
+        <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '4px 12px',
+            borderRadius: '20px',
+            background: isConnected ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+            border: `1px solid ${isConnected ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`,
+            fontSize: '0.8rem',
+            color: isConnected ? '#10b981' : '#ef4444',
+            transition: 'all 0.3s ease'
+        }}>
+            <Database size={14} />
+            <span style={{ fontWeight: 600 }}>{status.status.toUpperCase()}</span>
+            <span style={{ opacity: 0.6, fontSize: '0.7rem' }}>({status.latency})</span>
+        </div>
+    );
+};
 
 interface KPICardProps {
     title: string;
@@ -93,9 +136,14 @@ export default function DashboardPage() {
 
     return (
         <div className="dashboard-container">
-            <header style={{ marginBottom: '32px' }}>
-                <h1>Executive Dashboard</h1>
-                <p style={{ color: 'var(--text-secondary)' }}>Rice Mill Overview & Performance</p>
+            <header style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                <div>
+                    <h1>Executive Dashboard</h1>
+                    <p style={{ color: 'var(--text-secondary)' }}>Rice Mill Overview & Performance</p>
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                    <DatabaseStatus />
+                </div>
             </header>
 
             <AlertsWidget />
