@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import Sales from '@/lib/models/Sales';
 import Procurement from '@/lib/models/Procurement';
@@ -11,9 +12,11 @@ export async function GET() {
         // Helper for Sum Aggregation
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const getSum = async (model: any, field: string) => {
+            console.log(`Getting sum for ${model.modelName} field ${field}`);
             const result = await model.aggregate([
                 { $group: { _id: null, total: { $sum: `$${field}` } } }
             ]);
+            console.log(`Result for ${model.modelName}:`, result);
             return result[0]?.total || 0;
         };
 
@@ -92,6 +95,15 @@ export async function GET() {
             });
         });
 
+        const debug = {
+            db: mongoose.connection.db?.databaseName,
+            counts: {
+                procurements: await mongoose.connection.db?.collection('procurements').countDocuments().catch(() => -1),
+                millings: await mongoose.connection.db?.collection('millings').countDocuments().catch(() => -1),
+                sales: await mongoose.connection.db?.collection('sales').countDocuments().catch(() => -1),
+            }
+        };
+
         return NextResponse.json({
             metrics: {
                 totalPaddyStock,
@@ -100,7 +112,8 @@ export async function GET() {
                 netProfit,
                 avgEfficiency
             },
-            chartData
+            chartData,
+            debug
         });
 
     } catch (error) {

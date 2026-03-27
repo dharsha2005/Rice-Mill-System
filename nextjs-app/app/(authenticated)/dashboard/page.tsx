@@ -109,6 +109,7 @@ export default function DashboardPage() {
     const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
     const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
     const [loading, setLoading] = useState(true);
+    const [debug, setDebug] = useState<any>(null);
 
     useEffect(() => {
         loadData();
@@ -118,6 +119,7 @@ export default function DashboardPage() {
         try {
             const data = await getDashboardMetrics();
             setMetrics(data.metrics);
+            setDebug(data.debug);
             // Transform API chart format { month, purchases, sales } to chart format { name, Sales, Purchase }
             const transformed = (data.chartData || []).map((d: { month: string; purchases: number; sales: number }) => ({
                 name: d.month,
@@ -147,6 +149,12 @@ export default function DashboardPage() {
             </header>
 
             <AlertsWidget />
+
+            {debug && (
+                <div style={{ fontSize: '0.7rem', color: '#666', marginBottom: '10px' }}>
+                    DB: {debug.db} | P: {debug.counts.procurements} | M: {debug.counts.millings} | S: {debug.counts.sales}
+                </div>
+            )}
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '32px' }}>
                 <KPICard

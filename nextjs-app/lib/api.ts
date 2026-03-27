@@ -14,7 +14,8 @@ import {
     DashboardMetrics
 } from '@/types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const isClient = typeof window !== 'undefined';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || (isClient ? '' : 'http://localhost:3000');
 
 // Helper to get auth token
 function getAuthToken(): string | null {
@@ -95,6 +96,7 @@ export async function createProcurement(data: Partial<Procurement>): Promise<Pro
 export async function getDashboardMetrics(): Promise<{
     metrics: { totalPaddyStock: number; finishedRiceStock: number; todayCost: number; netProfit: number; avgEfficiency: number };
     chartData: { month: string; purchases: number; sales: number }[];
+    debug?: any;
 }> {
     return fetchAPI('/api/dashboard/metrics');
 }
