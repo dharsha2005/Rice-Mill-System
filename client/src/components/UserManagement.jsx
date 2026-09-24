@@ -62,7 +62,7 @@ const UserManagement = () => {
     const toggleStatus = async (user) => {
         const newStatus = user.status === 'Active' ? 'Disabled' : 'Active';
         try {
-            const res = await fetch(`http://localhost:3000/api/users/${user._id}/status`, {
+            const res = await fetch(`/api/users/${user._id}/status`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus })

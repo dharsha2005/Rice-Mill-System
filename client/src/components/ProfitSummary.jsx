@@ -27,6 +27,7 @@ const CountUp = ({ end, duration = 1000 }) => {
 };
 
 const ProfitSummary = ({ data }) => {
+    if (!data) return <div style={{ color: 'var(--text-secondary)' }}>No data available.</div>;
     const isProfit = data.netProfit >= 0;
 
     return (

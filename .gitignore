@@ -1,6 +1,8 @@
 node_modules/
 _legacy_backup/
 .env
+.env.*
+!.env.example
 dist/
 build/
 .DS_Store

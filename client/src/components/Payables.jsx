@@ -99,7 +99,6 @@ const Payables = ({ refreshTrigger, onPaymentRecorded }) => {
                                                 />
                                                 <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
                                                     <button
-                                                        onChange={(e) => setPayAmount(e.target.value)}
                                                         onClick={() => handleRecordPayment(item._id)}
                                                         style={{ background: '#10b981', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 8px', cursor: 'pointer', fontSize: '0.8rem' }}
                                                     >

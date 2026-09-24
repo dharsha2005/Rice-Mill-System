@@ -25,7 +25,7 @@ const AlertsWidget = () => {
 
     const resolveAlert = async (id) => {
         try {
-            await fetch(`http://localhost:3000/api/alerts/${id}/resolve`, { method: 'POST' });
+            await fetch(`/api/alerts/${id}/resolve`, { method: 'POST' });
             // Optimistic update
             setAlerts(alerts.filter(a => a._id !== id));
         } catch (err) {
