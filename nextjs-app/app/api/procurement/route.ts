@@ -20,14 +20,24 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { supplier_name, paddy_type, moisture_percentage, quantity, rate_per_quintal, purchase_date } = body;
 
-        const total_amount = quantity * rate_per_quintal;
+        const qtyNum = Number(quantity);
+        const rateNum = Number(rate_per_quintal);
+
+        if (!supplier_name || !paddy_type || !Number.isFinite(qtyNum) || qtyNum <= 0 || !Number.isFinite(rateNum) || rateNum < 0) {
+            return NextResponse.json(
+                { error: 'Valid supplier_name, paddy_type, quantity, and rate_per_quintal are required' },
+                { status: 400 }
+            );
+        }
+
+        const total_amount = qtyNum * rateNum;
 
         const newProcurement = await Procurement.create({
             supplier_name,
             paddy_type,
             moisture_percentage,
-            quantity,
-            rate_per_quintal,
+            quantity: qtyNum,
+            rate_per_quintal: rateNum,
             total_amount,
             purchase_date: purchase_date || new Date()
         });

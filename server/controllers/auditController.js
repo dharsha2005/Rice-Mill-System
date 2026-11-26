@@ -8,12 +8,23 @@ exports.getLogs = async (req, res) => {
 
         if (module) query.module = module;
         if (action) query.action = action;
-        if (user) query.user_name = { $regex: user, $options: 'i' };
+        if (user) {
+            const escapedUser = String(user).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            query.user_name = { $regex: escapedUser, $options: 'i' };
+        }
 
         if (start_date || end_date) {
             query.timestamp = {};
-            if (start_date) query.timestamp.$gte = new Date(start_date);
-            if (end_date) query.timestamp.$lte = new Date(end_date);
+            if (start_date) {
+                const start = new Date(start_date);
+                if (isNaN(start.getTime())) return res.status(400).json({ error: 'Invalid start_date' });
+                query.timestamp.$gte = start;
+            }
+            if (end_date) {
+                const end = new Date(end_date);
+                if (isNaN(end.getTime())) return res.status(400).json({ error: 'Invalid end_date' });
+                query.timestamp.$lte = end;
+            }
         }
 
         const logs = await AuditLog.find(query)

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Alert = require('../models/Alert');
 const alertService = require('../services/alertService');
 
@@ -22,6 +23,9 @@ exports.getAlerts = async (req, res) => {
 exports.resolveAlert = async (req, res) => {
     try {
         const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid alert ID' });
+        }
         await Alert.findByIdAndUpdate(id, { status: 'Resolved' });
         res.json({ message: 'Alert resolved' });
     } catch (err) {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import User from '@/lib/models/User';
 import { logActivity } from '@/lib/services/auditService';
@@ -9,6 +10,9 @@ export async function PATCH(
 ) {
     try {
         const { id } = await params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+        }
         await connectDB();
 
         const user = await User.findById(id);

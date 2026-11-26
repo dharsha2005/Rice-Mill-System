@@ -20,6 +20,13 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { username, password, role } = body;
 
+        if (!username || !password) {
+            return NextResponse.json(
+                { error: 'Username and password are required' },
+                { status: 400 }
+            );
+        }
+
         const existingUser = await User.findOne({ username });
         if (existingUser) {
             return NextResponse.json(

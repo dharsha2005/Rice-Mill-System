@@ -9,14 +9,21 @@ exports.createProcurement = async (req, res) => {
     try {
         const { supplier_name, paddy_type, moisture_percentage, quantity, rate_per_quintal, purchase_date } = req.body;
 
-        const total_amount = (quantity * rate_per_quintal);
+        const qtyNum = Number(quantity);
+        const rateNum = Number(rate_per_quintal);
+
+        if (!supplier_name || !paddy_type || !Number.isFinite(qtyNum) || qtyNum <= 0 || !Number.isFinite(rateNum) || rateNum < 0) {
+            return res.status(400).json({ error: 'Valid supplier_name, paddy_type, quantity, and rate_per_quintal are required' });
+        }
+
+        const total_amount = (qtyNum * rateNum);
 
         const newProcurement = await Procurement.create({
             supplier_name,
             paddy_type,
             moisture_percentage,
-            quantity,
-            rate_per_quintal,
+            quantity: qtyNum,
+            rate_per_quintal: rateNum,
             total_amount,
             purchase_date: purchase_date || new Date()
         });

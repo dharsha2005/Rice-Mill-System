@@ -20,9 +20,17 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { category, amount, description, payment_mode, expense_date } = body;
 
+        const numericAmount = Number(amount);
+        if (!category || !Number.isFinite(numericAmount) || numericAmount <= 0) {
+            return NextResponse.json(
+                { error: 'Valid category and positive amount are required' },
+                { status: 400 }
+            );
+        }
+
         const newExpense = await Expense.create({
             category,
-            amount,
+            amount: numericAmount,
             description,
             payment_mode,
             expense_date: expense_date || new Date()

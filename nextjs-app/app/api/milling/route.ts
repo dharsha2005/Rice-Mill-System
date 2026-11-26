@@ -21,10 +21,22 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { paddy_type, rice_variety, input_paddy_qty, output_rice_qty, broken_rice_qty, husk_qty, milling_date } = body;
 
-        const efficiency_percentage = ((output_rice_qty + broken_rice_qty) / input_paddy_qty) * 100;
+        const inputQty = Number(input_paddy_qty);
+        const outputQty = Number(output_rice_qty);
+        const brokenQty = Number(broken_rice_qty ?? 0);
+        const huskQty = Number(husk_qty ?? 0);
 
-        const invisible_loss = input_paddy_qty - (output_rice_qty + broken_rice_qty + husk_qty);
-        const loss_percentage = (invisible_loss / input_paddy_qty) * 100;
+        if (!paddy_type || !Number.isFinite(inputQty) || inputQty <= 0 || !Number.isFinite(outputQty) || outputQty < 0 || !Number.isFinite(brokenQty) || brokenQty < 0 || !Number.isFinite(huskQty) || huskQty < 0) {
+            return NextResponse.json(
+                { error: 'Valid paddy_type, positive input_paddy_qty, and non-negative output quantities are required' },
+                { status: 400 }
+            );
+        }
+
+        const efficiency_percentage = ((outputQty + brokenQty) / inputQty) * 100;
+
+        const invisible_loss = inputQty - (outputQty + brokenQty + huskQty);
+        const loss_percentage = (invisible_loss / inputQty) * 100;
 
         const batch_id = 'BATCH-' + Date.now().toString().slice(-6);
 
@@ -32,10 +44,10 @@ export async function POST(request: NextRequest) {
             batch_id,
             paddy_type,
             rice_variety: rice_variety || paddy_type, // Fallback to paddy_type if not provided
-            input_paddy_qty,
-            output_rice_qty,
-            broken_rice_qty,
-            husk_qty,
+            input_paddy_qty: inputQty,
+            output_rice_qty: outputQty,
+            broken_rice_qty: brokenQty,
+            husk_qty: huskQty,
             efficiency_percentage,
             loss_percentage,
             milling_date: milling_date || new Date()
@@ -43,7 +55,7 @@ export async function POST(request: NextRequest) {
 
         // Update Inventory
         // 1 Ton = 1000kg = 20 Bags of 50kg
-        const riceBags = output_rice_qty * 20;
+        const riceBags = outputQty * 20;
 
         // Use rice_variety (Output) for updating the Rice Stock
         await Inventory.findOneAndUpdate(
@@ -53,7 +65,7 @@ export async function POST(request: NextRequest) {
         );
 
         // Update Broken Rice
-        const brokenBags = broken_rice_qty * 20;
+        const brokenBags = brokenQty * 20;
         await Inventory.findOneAndUpdate(
             { rice_variety: rice_variety || paddy_type, grade: 'Broken', bag_size: 50 },
             { $inc: { quantity: brokenBags }, $set: { updated_at: new Date() } },

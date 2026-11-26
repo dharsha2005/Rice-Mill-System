@@ -10,9 +10,14 @@ exports.getProfitSummary = async (req, res) => {
 
         // Date Filtering Logic
         if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                return res.status(400).json({ error: 'Invalid date range' });
+            }
             matchStage = {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
+                $gte: start,
+                $lte: end
             };
         } else if (period === 'daily') {
             const today = new Date();

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const RiceVariety = require('../models/RiceVariety');
 
 exports.getVarieties = async (req, res) => {
@@ -34,6 +35,9 @@ exports.addVariety = async (req, res) => {
 exports.deleteVariety = async (req, res) => {
     try {
         const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid variety ID' });
+        }
         // Soft delete
         await RiceVariety.findByIdAndUpdate(id, { is_active: false });
         res.json({ message: 'Variety removed' });

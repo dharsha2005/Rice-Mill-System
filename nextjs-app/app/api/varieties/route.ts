@@ -20,6 +20,13 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { name, code } = body;
 
+        if (!name || typeof name !== 'string' || !name.trim()) {
+            return NextResponse.json(
+                { error: 'Variety name is required' },
+                { status: 400 }
+            );
+        }
+
         const existingVariety = await RiceVariety.findOne({ name });
         if (existingVariety) {
             return NextResponse.json(

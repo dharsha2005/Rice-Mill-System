@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Inventory = require('../models/Inventory');
 
 exports.getStockOverview = async (req, res) => {
@@ -20,12 +21,19 @@ const auditService = require('../services/auditService');
 exports.adjustStock = async (req, res) => {
     try {
         const { id, adjustment, reason } = req.body;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid inventory ID' });
+        }
+        const numericAdjustment = Number(adjustment);
+        if (!Number.isFinite(numericAdjustment)) {
+            return res.status(400).json({ error: 'Valid numeric adjustment is required' });
+        }
         // In real app, log 'reason' in a separate MovementLog table
         const item = await Inventory.findById(id);
         if (!item) return res.status(404).json({ error: 'Item not found' });
 
         const oldQuantity = item.quantity;
-        item.quantity += adjustment;
+        item.quantity += numericAdjustment;
         item.updated_at = new Date();
         await item.save();
 

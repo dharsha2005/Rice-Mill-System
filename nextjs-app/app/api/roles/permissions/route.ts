@@ -10,6 +10,13 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { role, permissions } = body;
 
+        if (!role || !permissions || typeof permissions !== 'object' || Array.isArray(permissions)) {
+            return NextResponse.json(
+                { error: 'Valid role and permissions object are required' },
+                { status: 400 }
+            );
+        }
+
         const roleDoc = await RolePermission.findOneAndUpdate(
             { role },
             { permissions: new Map(Object.entries(permissions)) },
@@ -28,7 +35,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
             _id: roleDoc._id,
             role: roleDoc.role,
-            permissions: Object.fromEntries(roleDoc.permissions)
+            permissions: roleDoc.permissions instanceof Map
+                ? Object.fromEntries(roleDoc.permissions)
+                : (roleDoc.permissions || {})
         });
     } catch (error) {
         return NextResponse.json({ error: (error as Error).message }, { status: 500 });

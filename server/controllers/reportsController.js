@@ -32,6 +32,9 @@ exports.getSalesReport = async (req, res) => {
             // new Date("YYYY-MM-DD") returns UTC midnight.
             const start = new Date(startDate);
             const end = new Date(endDate);
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                return res.status(400).json({ error: 'Invalid date range' });
+            }
             // Ensure we capture the entire end day in UTC
             end.setUTCHours(23, 59, 59, 999);
 
@@ -69,6 +72,9 @@ exports.getExpenseReport = async (req, res) => {
         if (startDate && endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                return res.status(400).json({ error: 'Invalid date range' });
+            }
             end.setUTCHours(23, 59, 59, 999);
 
             filter.expense_date = {
@@ -125,6 +131,9 @@ exports.getPLReport = async (req, res) => {
         if (startDate && endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                return res.status(400).json({ error: 'Invalid date range' });
+            }
             // Ensure end date covers the full day
             end.setHours(23, 59, 59, 999);
 

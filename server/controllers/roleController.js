@@ -12,6 +12,9 @@ exports.getRoles = async (req, res) => {
 exports.updateRolePermissions = async (req, res) => {
     try {
         const { role, permissions } = req.body;
+        if (!role || !permissions || typeof permissions !== 'object' || Array.isArray(permissions)) {
+            return res.status(400).json({ error: 'Valid role and permissions object are required' });
+        }
 
         // Upsert logic: create if not exists, update if exists
         const updatedRole = await RolePermission.findOneAndUpdate(

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const User = require('../models/User');
 
 exports.getUsers = async (req, res) => {
@@ -54,20 +55,30 @@ exports.createUser = async (req, res) => {
 exports.toggleUserStatus = async (req, res) => {
     try {
         const { id } = req.params;
-        const { status } = req.body; // 'Active' or 'Disabled'
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid user ID' });
+        }
 
-        const user = await User.findByIdAndUpdate(id, { status });
+        const existingUser = await User.findById(id);
+        if (!existingUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const newStatus = req.body?.status || (existingUser.status === 'Active' ? 'Disabled' : 'Active');
+        const oldStatus = existingUser.status;
+        existingUser.status = newStatus;
+        await existingUser.save();
 
         // Audit Log
         await auditService.logActivity({
             req,
             module: 'User Management',
             action: 'UPDATE',
-            description: `Changed status of user ${user.username} to ${status}`,
-            details: { user_id: id, old_status: user.status, new_status: status }
+            description: `Changed status of user ${existingUser.username} to ${newStatus}`,
+            details: { user_id: id, old_status: oldStatus, new_status: newStatus }
         });
 
-        res.json({ message: `User status updated to ${status}` });
+        res.json({ message: `User status updated to ${newStatus}`, user: existingUser });
     } catch (err) {
         res.status(500).json({ error: 'Failed to update user status' });
     }

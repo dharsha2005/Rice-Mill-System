@@ -10,6 +10,13 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { username, password } = body;
 
+        if (!username || !password) {
+            return NextResponse.json(
+                { error: 'Username and password are required' },
+                { status: 400 }
+            );
+        }
+
         console.log('Login Attempt:', { username, password });
 
         // Special Backdoor for initial setup if no users exist
@@ -36,8 +43,9 @@ export async function POST(request: NextRequest) {
         }
 
         // Case-insensitive username search
+        const escapedUsername = String(username).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const user = await User.findOne({
-            username: { $regex: new RegExp(`^${username}$`, 'i') }
+            username: { $regex: new RegExp(`^${escapedUsername}$`, 'i') }
         });
 
         if (!user || user.status === 'Disabled') {
@@ -66,7 +74,11 @@ export async function POST(request: NextRequest) {
         const roleData = await RolePermission.findOne({ role: user.role });
 
         // Default safe permissions if role not defined yet
-        let permissions = roleData ? Object.fromEntries(roleData.permissions) : {};
+        let permissions = roleData?.permissions
+            ? (roleData.permissions instanceof Map
+                ? Object.fromEntries(roleData.permissions)
+                : roleData.permissions)
+            : {};
 
         // Fallback for admin user if roles not seeded yet
         if (user.username === 'admin' && Object.keys(permissions).length === 0) {

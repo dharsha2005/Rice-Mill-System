@@ -19,15 +19,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // CORS configuration for Vercel deployment
+const allowedOrigins = [
+    'http://localhost:5173',  // Vite dev server
+    'http://localhost:3000',  // Next.js dev server
+    'https://rice-mill-system-61l4.vercel.app',  // Your Vercel frontend
+    /^https:\/\/.*\.vercel\.app$/,  // Allow all Vercel subdomains
+    ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [])
+];
+
 const corsOptions = {
-    origin: [
-        'http://localhost:5173',  // Vite dev server
-        'http://localhost:3000',  // Next.js dev server
-        'https://rice-mill-system-61l4.vercel.app',  // Your Vercel frontend
-        'https://*.vercel.app'  // Allow all Vercel subdomains
-    ],
+    origin: allowedOrigins,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 };
 
@@ -58,12 +61,19 @@ app.get('/api/health', (req, res) => {
 });
 app.use('/api', apiRoutes);
 
-// Serve static files from the client directory
-app.use(express.static(path.join(__dirname, '../client/dist')));
+// Serve static files from the client directory if built
+const clientDistPath = path.join(__dirname, '../client/dist');
+const clientIndexPath = path.join(clientDistPath, 'index.html');
+if (fs.existsSync(clientDistPath)) {
+    app.use(express.static(clientDistPath));
+}
 
-// Handle React routing, return all requests to React app
+// Handle React routing or API-only deployment on Render
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+    if (fs.existsSync(clientIndexPath)) {
+        return res.sendFile(clientIndexPath);
+    }
+    return res.json({ status: 'ok', message: 'Rice Mill API Server Running' });
 });
 
 // Seeding Logic

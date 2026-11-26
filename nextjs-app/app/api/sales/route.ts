@@ -25,45 +25,56 @@ export async function POST(request: NextRequest) {
             quantity_bags, rate_per_bag, transport_charge, gst_amount, payment_status
         } = body;
 
-        // Check & Update Stock
-        const inventoryItem = await Inventory.findOne({
-            rice_variety,
-            grade: grade || 'Standard',
-            bag_size: bag_size || 50
-        });
+        const qtyBags = Number(quantity_bags);
+        const rateBag = Number(rate_per_bag);
+        const bagSizeNum = Number(bag_size || 50);
 
-        if (!inventoryItem) {
+        if (!customer_name || !rice_variety || !Number.isFinite(qtyBags) || qtyBags <= 0 || !Number.isFinite(rateBag) || rateBag < 0) {
             return NextResponse.json(
-                { error: `Stock not found for ${rice_variety} (${grade}, ${bag_size}kg)` },
+                { error: 'Valid customer_name, rice_variety, quantity_bags, and rate_per_bag are required' },
                 { status: 400 }
             );
         }
 
-        if (inventoryItem.quantity < quantity_bags) {
+        // Check & Update Stock
+        const inventoryItem = await Inventory.findOne({
+            rice_variety,
+            grade: grade || 'Standard',
+            bag_size: bagSizeNum
+        });
+
+        if (!inventoryItem) {
+            return NextResponse.json(
+                { error: `Stock not found for ${rice_variety} (${grade}, ${bagSizeNum}kg)` },
+                { status: 400 }
+            );
+        }
+
+        if (inventoryItem.quantity < qtyBags) {
             return NextResponse.json({
-                error: `Insufficient Stock. Available: ${inventoryItem.quantity} Bags. Requested: ${quantity_bags} Bags.`
+                error: `Insufficient Stock. Available: ${inventoryItem.quantity} Bags. Requested: ${qtyBags} Bags.`
             }, { status: 400 });
         }
 
         // Deduct Stock
-        inventoryItem.quantity -= quantity_bags;
+        inventoryItem.quantity -= qtyBags;
         inventoryItem.updated_at = new Date();
         await inventoryItem.save();
 
         // Create Sale Record
-        const invoice_number = 'INV-' + Date.now().toString().slice(-6);
-        const total_amount = (quantity_bags * rate_per_bag) + Number(transport_charge || 0) + Number(gst_amount || 0);
+        const invoice_number = 'INV-' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 100).toString().padStart(2, '0');
+        const total_amount = (qtyBags * rateBag) + Number(transport_charge || 0) + Number(gst_amount || 0);
 
         const newSale = await Sales.create({
             invoice_number,
             customer_name,
             rice_variety,
             grade: grade || 'Standard',
-            bag_size: bag_size || 50,
-            quantity_bags,
-            rate_per_bag,
-            transport_charge,
-            gst_amount,
+            bag_size: bagSizeNum,
+            quantity_bags: qtyBags,
+            rate_per_bag: rateBag,
+            transport_charge: Number(transport_charge || 0),
+            gst_amount: Number(gst_amount || 0),
             total_amount,
             payment_status,
             sale_date: new Date(),

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Payment = require('../models/Payment');
 const Sales = require('../models/Sales');
 const Procurement = require('../models/Procurement');
@@ -9,8 +10,13 @@ exports.recordPayment = async (req, res) => {
         const { ref_type, ref_id, amount, payment_mode, notes, payment_date } = req.body;
         // ref_type: 'Sales' (Income), 'Procurement' (Expense), 'Expense' (Direct Expense - usually 100% paid immediately but good for tracking)
 
-        if (!amount || !ref_type || !ref_id) {
-            return res.status(400).json({ error: 'Missing required fields' });
+        const numericAmount = Number(amount);
+        if (!Number.isFinite(numericAmount) || numericAmount <= 0 || !ref_type || !ref_id) {
+            return res.status(400).json({ error: 'Missing or invalid required fields' });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(ref_id)) {
+            return res.status(400).json({ error: 'Invalid reference ID' });
         }
 
         console.log(`[Payment] Processing: Type=${ref_type}, ID=${ref_id}, Amount=${amount}`);

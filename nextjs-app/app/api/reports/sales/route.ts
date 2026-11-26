@@ -12,9 +12,14 @@ export async function GET(request: NextRequest) {
 
         const query: Record<string, unknown> = {};
         if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                return NextResponse.json({ error: 'Invalid date range' }, { status: 400 });
+            }
             query.sale_date = {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
+                $gte: start,
+                $lte: end
             };
         }
 

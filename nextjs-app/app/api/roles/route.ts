@@ -11,7 +11,9 @@ export async function GET() {
         const rolesData = roles.map(role => ({
             _id: role._id,
             role: role.role,
-            permissions: Object.fromEntries(role.permissions)
+            permissions: role.permissions instanceof Map
+                ? Object.fromEntries(role.permissions)
+                : (role.permissions || {})
         }));
 
         return NextResponse.json(rolesData);

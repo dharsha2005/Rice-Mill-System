@@ -2,8 +2,10 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/ricemill_erp';
-    const conn = await mongoose.connect(uri);
+    if (!process.env.MONGO_URI) {
+      throw new Error('MONGO_URI environment variable is not defined');
+    }
+    const conn = await mongoose.connect(process.env.MONGO_URI);
     console.log(`MongoDB connected successfully: ${conn.connection.host}`);
   } catch (err) {
     console.error('MongoDB connection error:', err);

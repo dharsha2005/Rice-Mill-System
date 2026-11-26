@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import Alert from '@/lib/models/Alert';
 
@@ -8,6 +9,9 @@ export async function POST(
 ) {
     try {
         const { id } = await params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ error: 'Invalid alert ID' }, { status: 400 });
+        }
         await connectDB();
 
         const alert = await Alert.findByIdAndUpdate(

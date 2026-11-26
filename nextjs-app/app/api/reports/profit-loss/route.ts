@@ -15,6 +15,9 @@ export async function GET(request: NextRequest) {
         if (startDate && endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                return NextResponse.json({ error: 'Invalid date range' }, { status: 400 });
+            }
 
             const salesData = await Sales.find({
                 sale_date: { $gte: start, $lte: end }

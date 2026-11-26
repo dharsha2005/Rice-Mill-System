@@ -17,12 +17,20 @@ export async function GET(request: NextRequest) {
 
         if (moduleName) query.module = moduleName;
         if (action) query.action = action.toUpperCase();
-        if (user_name) query.user_name = { $regex: user_name, $options: 'i' };
+        if (user_name) {
+            const escapedUser = user_name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            query.user_name = { $regex: escapedUser, $options: 'i' };
+        }
 
         if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                return NextResponse.json({ error: 'Invalid date range' }, { status: 400 });
+            }
             query.timestamp = {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
+                $gte: start,
+                $lte: end
             };
         }
 

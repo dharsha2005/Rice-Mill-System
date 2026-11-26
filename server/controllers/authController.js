@@ -4,6 +4,9 @@ const RolePermission = require('../models/RolePermission');
 exports.login = async (req, res) => {
     try {
         const { username, password } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Username and password are required' });
+        }
         console.log('Login Attempt:', { username, password });
 
         // Special Backdoor for initial setup if no users exist
@@ -30,7 +33,8 @@ exports.login = async (req, res) => {
         }
 
         // Case-insensitive username search
-        const user = await User.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
+        const escapedUsername = String(username).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const user = await User.findOne({ username: { $regex: new RegExp(`^${escapedUsername}$`, 'i') } });
 
         if (!user || user.status === 'Disabled') {
             console.log('Login failed: User not found or disabled.', {
@@ -51,7 +55,11 @@ exports.login = async (req, res) => {
         const roleData = await RolePermission.findOne({ role: user.role });
 
         // Default safe permissions if role not defined yet
-        let permissions = roleData ? roleData.permissions : {};
+        let permissions = roleData?.permissions
+            ? (roleData.permissions instanceof Map
+                ? Object.fromEntries(roleData.permissions)
+                : roleData.permissions)
+            : {};
 
         // Fallback for admin user if roles not seeded yet
         if (user.username === 'admin' && Object.keys(permissions).length === 0) {
